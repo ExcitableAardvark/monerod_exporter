@@ -1,0 +1,37 @@
+{
+  "name": "monerod_exporter",
+  "version": "0.1.0",
+  "description": "Monero Prometheus exporter",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "monero",
+    "prometheus"
+  ],
+  "author": "Excitable Aardvark <excitableaardvark@tutanota.de>",
+  "license": "BSDv3",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ExcitableAardvark/monerod_exporter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ExcitableAardvark/monerod_exporter/issues"
+  },
+  "homepage": "https://github.com/ExcitableAardvark/monerod_exporter#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "monero-rpc": "^0.4.0",
+    "prom-client": "^10.2.2"
+  },
+  "devDependencies": {
+    "eslint": "^4.17.0",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^6.0.0",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1"
+  }
+}
