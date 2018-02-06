@@ -8,6 +8,7 @@
 const Daemon = require('monero-rpc').Daemon
 const express = require('express')
 const prometheus = require('prom-client')
+const util = require('util')
 
 const DAEMON_HOST = process.env.DAEMON_HOST || 'http://localhost:18081'
 const PORT = process.env.PORT || 9396
@@ -16,24 +17,34 @@ const Gauge = prometheus.Gauge
 const app = express()
 const daemon = new Daemon(DAEMON_HOST)
 
+const getInfo = util.promisify(daemon.getInfo.bind(daemon))
+const getLastBlockHeader = util.promisify(daemon.getLastBlockHeader.bind(daemon))
+
+const difficulty = new Gauge({ name: 'monerod_block_difficulty', help: 'Last block difficulty' })
 const incomingConnections = new Gauge({ name: 'monerod_connections_incoming', help: 'Number of incoming connections' })
-const outgoingConnections = new Gauge({ name: 'monerod_connections_outgoing', help: 'Number of outgoing connections' })
 const mempoolSize = new Gauge({ name: 'monerod_tx_mempool', help: 'Number of transactions in the mempool' })
+const outgoingConnections = new Gauge({ name: 'monerod_connections_outgoing', help: 'Number of outgoing connections' })
+const reward = new Gauge({ name: 'monerod_block_reward', help: 'Last block reward' })
 const txCount = new Gauge({ name: 'monerod_tx_chain', help: 'Number of transactions in total' })
 
 app.get('/metrics', (req, res) => {
-  console.log('.')
+  Promise.all([
+    getInfo(),
+    getLastBlockHeader()
+  ])
+    .then(([info, header]) => {
+      difficulty.set(Number(header.difficulty))
+      incomingConnections.set(Number(info.incoming_connections_count))
+      mempoolSize.set(Number(info.tx_pool_size))
+      outgoingConnections.set(Number(info.outgoing_connections_count))
+      reward.set(Number(header.reward / 1e12))
+      txCount.set(Number(info.tx_count))
 
-  daemon.getInfo((err, info) => {
-    if (err) return console.log(err)
-
-    incomingConnections.set(Number(info.incoming_connections_count))
-    outgoingConnections.set(Number(info.outgoing_connections_count))
-    txCount.set(Number(info.tx_count))
-    mempoolSize.set(Number(info.tx_pool_size))
-
-    res.end(prometheus.register.metrics())
-  })
+      res.end(prometheus.register.metrics())
+    })
+    .catch(e => {
+      console.log(e)
+    })
 })
 
 app.listen(PORT, () => console.log(`Listening on :${PORT}`))

@@ -8,10 +8,12 @@
 
 ### Metrics Exported
 
+* `monerod_block_difficulty` - Last block difficulty
+* `monerod_block_reward` - Last block reward
 * `monerod_connections_incoming` - Number of incoming connections
 * `monerod_connections_outgoing` - Number of outgoing connections
-* `monerod_tx_mempool` - Number of transactions in the mempool
 * `monerod_tx_chain` - Number of transactions in total
+* `monerod_tx_mempool` - Number of transactions in the mempool
 
 ### Pretty Screenshots
 
