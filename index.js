@@ -18,7 +18,8 @@ const daemon = new Daemon(DAEMON_HOST)
 
 const incomingConnections = new Gauge({ name: 'monerod_connections_incoming', help: 'Number of incoming connections' })
 const outgoingConnections = new Gauge({ name: 'monerod_connections_outgoing', help: 'Number of outgoing connections' })
-const mempoolSize = new Gauge({ name: 'monerod_mempool_size', help: 'Number of transactions in the mempool' })
+const mempoolSize = new Gauge({ name: 'monerod_tx_mempool', help: 'Number of transactions in the mempool' })
+const txCount = new Gauge({ name: 'monerod_tx_chain', help: 'Number of transactions in total' })
 
 app.get('/metrics', (req, res) => {
   console.log('.')
@@ -28,6 +29,7 @@ app.get('/metrics', (req, res) => {
 
     incomingConnections.set(Number(info.incoming_connections_count))
     outgoingConnections.set(Number(info.outgoing_connections_count))
+    txCount.set(Number(info.tx_count))
     mempoolSize.set(Number(info.tx_pool_size))
 
     res.end(prometheus.register.metrics())
