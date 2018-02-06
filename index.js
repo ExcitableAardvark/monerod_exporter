@@ -10,7 +10,7 @@ const express = require('express')
 const prometheus = require('prom-client')
 
 const DAEMON_HOST = process.env.DAEMON_HOST || 'http://localhost:18081'
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 9396
 const Gauge = prometheus.Gauge
 
 const app = express()
